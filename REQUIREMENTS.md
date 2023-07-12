@@ -3,7 +3,7 @@
 Read the instructions carefully.
 Your ability to understand and follow instructions is part of the evaluation.
 
-Your project will be evaluated from various angles: code structure, design, API signature, testing, documentation. Importance should be given to the structure of the project and design of the packages. The correctness of algorithms comes second in relation to API design and idiomatic golang. Your code needs to be easy to follow and easy to maintain for other developers. You should focus on writing your best code, don't write a lot of code. It doesn't matter if the service is incomplete, we will be able to evaluate what matters to 90poe from a few packages interacting with each other.
+Your project will be evaluated from various angles: code structure, design, API signature, testing, documentation. Importance should be given to the structure of the project and design of the packages. The correctness of algorithms comes second in relation to API design and idiomatic golang. Your code needs to be easy to follow and easy to maintain for other developers. You should focus on writing your best code, don't write a lot of code. It doesn't matter if the service is incomplete, we will be able to evaluate what matters to ### from a few packages interacting with each other.
 
 Code reviewers might engage with your repository via github issues (or equivalent), this is entirely part of the interview process, so try to answer their questions and provide possible code changes to fix issues.
 
@@ -16,7 +16,7 @@ Successful applications show us that 2 or 3 hours are more than enough to cover 
 This assignment is meant to evaluate the golang proficiency of full-time engineers.
 Your code structure should follow microservices best practices and our evaluation will focus primarily on your ability to follow good design principles and less on correctness and completeness of algorithms. During the face to face interview you will have the opportunity to explain your design choices and provide justifications for the parts that you omitted.
 
-**Do not mention 90 Percent of Everything or 90poe anywhere on the code or repository name.**
+**Do not mention ### anywhere on the code or repository name.**
 
 ## Evaluation points in order of importance
 

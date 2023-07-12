@@ -6,7 +6,7 @@ import (
 	"ports-service/internal/ports/domain"
 )
 
-// InMemoryPortRepository is an in-memory implementation of the PortRepository interface.
+// InMemoryPortRepository is an in-memory repository handling ports.
 type InMemoryPortRepository struct {
 	ports map[string]domain.Port
 	mutex sync.RWMutex
