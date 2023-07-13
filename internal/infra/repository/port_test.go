@@ -3,8 +3,8 @@ package repository_test
 import (
 	"testing"
 
+	"ports-service/internal/infra/repository"
 	"ports-service/internal/ports/domain"
-	"ports-service/internal/ports/repository"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"ports-service/internal/ports/repository"
+	"ports-service/internal/infra/repository"
 	"ports-service/internal/ports/service"
 )
 

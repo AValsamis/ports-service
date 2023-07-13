@@ -23,20 +23,19 @@ The service layer acts as an interface between the repository and the domain log
 
 ### Instructions
 1. Clone the repository and navigate to the project directory.
-2. Make sure the ports.json file is present in the same directory or provide the correct file path using the PORTS_JSON_PATH environment variable.
-3. Run the following command to build the application:
+2. Run the following command to build the application:
    ```shell
    make build
    ```
 
-4. To run the application locally, use the following command:
+3. To run the application locally, use the following command:
    ```shell
    make run-local
    ```
 
-   This will load the ports from the ports.json file and display the number of ports imported.
+   This will load the ports from the assets/ports.json file and display the number of ports imported.
 
-5. To run the application using Docker, use the following commands:
+4. To run the application using Docker, use the following commands:
    ```shell
    make docker-build
    make docker-run

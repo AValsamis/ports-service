@@ -18,12 +18,12 @@ build: ## Build the application
 	go build -o ports-service.out ./cmd
 
 run-local: ## Run the application locally
-	PORTS_JSON_PATH=ports.json ./ports-service.out
+	PORTS_JSON_PATH=assets/ports.json ./ports-service.out
 
 docker-build: ## Build the docker image of the application
-	docker build -t ports-service .
+	docker build -t ports-service -f build/Dockerfile .
 
 docker-run: ## Run the application in docker
-	docker run -it --rm -e PORTS_JSON_PATH=ports.json ports-service
+	docker run -it --rm -e PORTS_JSON_PATH=assets/ports.json ports-service
 
 .PHONY: help lint fmt test-local build run-local docker-build docker-run

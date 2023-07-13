@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"ports-service/internal/infra/repository"
 	"ports-service/internal/ports/domain"
-	"ports-service/internal/ports/repository"
 	"ports-service/internal/ports/service"
 )
 
