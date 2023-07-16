@@ -18,7 +18,7 @@ build: ## Build the application
 	go build -o ports-service.out ./cmd
 
 run-local: ## Run the application locally
-	PORTS_JSON_PATH=assets/ports.json ./ports-service.out
+	REDIS_URL=redis://redis:6379/0 PORTS_JSON_PATH=assets/ports.json ./ports-service.out
 
 docker-build: ## Build the docker image of the application
 	docker build -t ports-service -f build/Dockerfile .
@@ -29,4 +29,4 @@ docker-run: ## Spin up the application and Redis container using Docker Compose
 docker-down: ## Bring down the application and Redis container
 	docker-compose -f ./build/docker-compose.yml down
 
-.PHONY: help lint fmt test-local build run-local docker-build docker-run docker-up docker-down
+.PHONY: help lint fmt test build run-local docker-build docker-run docker-up docker-down
