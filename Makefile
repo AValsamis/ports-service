@@ -17,8 +17,8 @@ test: ## Run tests locally with race detector and test coverage
 build: ## Build the application
 	go build -o ports-service.out ./cmd
 
-run-local: ## Run the application locally
-	REDIS_URL=redis://redis:6379/0 PORTS_JSON_PATH=assets/ports.json ./ports-service.out
+run-local: ## Run the application locally - you need to make sure a redis instance lives in redis://localhost:6379/0
+	REDIS_URL=redis://localhost:6379/0 PORTS_JSON_PATH=assets/ports.json ./ports-service.out
 
 docker-build: ## Build the docker image of the application
 	docker build -t ports-service -f build/Dockerfile .
