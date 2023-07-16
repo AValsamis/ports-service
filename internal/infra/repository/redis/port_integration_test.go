@@ -3,13 +3,14 @@ package redis_test
 import (
 	"context"
 	"fmt"
-	"ports-service/internal/infra/repository/redis"
-	"ports-service/internal/ports/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
+
+	"ports-service/internal/infra/repository/redis"
+	"ports-service/internal/ports/domain"
 )
 
 var (

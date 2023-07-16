@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"ports-service/internal/ports/domain"
-
 	"github.com/go-redis/redis/v8"
+
+	"ports-service/internal/ports/domain"
 )
 
 // PortRepository is a Redis repository handling ports.

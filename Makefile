@@ -23,7 +23,10 @@ run-local: ## Run the application locally
 docker-build: ## Build the docker image of the application
 	docker build -t ports-service -f build/Dockerfile .
 
-docker-run: ## Run the application in docker
-	docker run -it --rm -e PORTS_JSON_PATH=assets/ports.json ports-service
+docker-run: ## Spin up the application and Redis container using Docker Compose
+	docker-compose -f ./build/docker-compose.yml up
 
-.PHONY: help lint fmt test-local build run-local docker-build docker-run
+docker-down: ## Bring down the application and Redis container
+	docker-compose -f ./build/docker-compose.yml down
+
+.PHONY: help lint fmt test-local build run-local docker-build docker-run docker-up docker-down
