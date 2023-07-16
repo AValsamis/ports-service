@@ -3,11 +3,12 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"ports-service/internal/ports/domain"
 
 	"github.com/go-redis/redis/v8"
-
-	"ports-service/internal/ports/domain"
 )
+
+const portPrefix = "port:"
 
 // PortRepository is a Redis repository handling ports.
 type PortRepository struct {
@@ -34,7 +35,8 @@ func (r *PortRepository) UpsertPort(ctx context.Context, port domain.Port) error
 		return err
 	}
 
-	err = r.client.Set(ctx, port.UNLOC, data, 0).Err()
+	key := portPrefix + port.UNLOC
+	err = r.client.Set(ctx, key, data, 0).Err()
 	if err != nil {
 		return err
 	}
@@ -44,7 +46,8 @@ func (r *PortRepository) UpsertPort(ctx context.Context, port domain.Port) error
 
 // GetPortByUNLOC retrieves a port from the repository by its UNLOC code.
 func (r *PortRepository) GetPortByUNLOC(ctx context.Context, unloc string) (*domain.Port, error) {
-	data, err := r.client.Get(ctx, unloc).Bytes()
+	key := portPrefix + unloc
+	data, err := r.client.Get(ctx, key).Bytes()
 	if err != nil {
 		if err == redis.Nil {
 			return nil, nil
@@ -63,7 +66,7 @@ func (r *PortRepository) GetPortByUNLOC(ctx context.Context, unloc string) (*dom
 
 // GetPortsLength returns the total number of ports in the repository.
 func (r *PortRepository) GetPortsLength(ctx context.Context) (int64, error) {
-	keys, err := r.client.Keys(ctx, "*").Result()
+	keys, err := r.client.Keys(ctx, portPrefix+"*").Result()
 	if err != nil {
 		return 0, err
 	}

@@ -120,3 +120,49 @@ func TestRedisPortRepository_GetPortByUNLOC(t *testing.T) {
 	assert.Equal(t, port.City, result.City, "Expected port city to match")
 	assert.Equal(t, port.Country, result.Country, "Expected port country to match")
 }
+
+func TestRedisPortRepository_GetPortsLength(t *testing.T) {
+	ctx := context.Background()
+	cleanup, err := setupRedisContainer(t)
+	assert.NoError(t, err, "Failed to set up Redis container")
+	defer cleanup()
+
+	// Upsert a few ports
+	port1 := domain.Port{
+		Name:    "Port 1",
+		City:    "City 1",
+		Country: "Country 1",
+		UNLOC:   "PORT1",
+	}
+	err = redisRepo.UpsertPort(ctx, port1)
+	assert.NoError(t, err, "Expected no error")
+
+	port2 := domain.Port{
+		Name:    "Port 2",
+		City:    "City 2",
+		Country: "Country 2",
+		UNLOC:   "PORT2",
+	}
+	err = redisRepo.UpsertPort(ctx, port2)
+	assert.NoError(t, err, "Expected no error")
+
+	// Get the total number of ports in the repository
+	length, err := redisRepo.GetPortsLength(ctx)
+	assert.NoError(t, err, "Expected no error")
+	assert.Equal(t, int64(2), length, "Expected 2 ports in the repository")
+
+	// Upsert another port
+	port3 := domain.Port{
+		Name:    "Port 3",
+		City:    "City 3",
+		Country: "Country 3",
+		UNLOC:   "PORT3",
+	}
+	err = redisRepo.UpsertPort(ctx, port3)
+	assert.NoError(t, err, "Expected no error")
+
+	// Get the updated total number of ports in the repository
+	length, err = redisRepo.GetPortsLength(ctx)
+	assert.NoError(t, err, "Expected no error")
+	assert.Equal(t, int64(3), length, "Expected 3 ports in the repository")
+}
