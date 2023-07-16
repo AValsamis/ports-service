@@ -2,19 +2,21 @@ package service_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"os"
+	"ports-service/internal/infra/repository/inmemory"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"ports-service/internal/infra/repository"
 	"ports-service/internal/ports/domain"
 	"ports-service/internal/ports/service"
 )
 
 func TestPortService_LoadPorts(t *testing.T) {
-	repo := repository.NewPortRepository()
+	ctx := context.Background()
+	repo := inmemory.NewPortRepository()
 	portService := service.NewPortService(repo)
 
 	tempFile, err := os.CreateTemp("", "ports.json")
@@ -28,11 +30,11 @@ func TestPortService_LoadPorts(t *testing.T) {
 	assert.NoError(t, err)
 	defer file.Close()
 
-	err = portService.LoadPorts(file, nil)
+	err = portService.LoadPorts(ctx, file, nil)
 	assert.NoError(t, err)
 
 	// Retrieve the loaded ports from the repository
-	loadedPort1, err := repo.GetPortByUNLOC("AEJEA")
+	loadedPort1, err := repo.GetPortByUNLOC(ctx, "AEJEA")
 	assert.NoError(t, err)
 	assert.NotNil(t, loadedPort1)
 	expectedPort1 := &domain.Port{
@@ -50,7 +52,7 @@ func TestPortService_LoadPorts(t *testing.T) {
 	}
 	assert.True(t, comparePorts(loadedPort1, expectedPort1))
 
-	loadedPort2, err := repo.GetPortByUNLOC("AEJED")
+	loadedPort2, err := repo.GetPortByUNLOC(ctx, "AEJED")
 	assert.NoError(t, err)
 	assert.NotNil(t, loadedPort2)
 	expectedPort2 := &domain.Port{

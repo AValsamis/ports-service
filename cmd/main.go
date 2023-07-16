@@ -1,12 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
+	"ports-service/internal/infra/repository/inmemory"
 	"syscall"
 
-	"ports-service/internal/infra/repository"
 	"ports-service/internal/ports/service"
 )
 
@@ -14,7 +15,7 @@ func main() {
 	terminateCh := make(chan os.Signal, 1)
 	signal.Notify(terminateCh, syscall.SIGINT, syscall.SIGTERM)
 
-	repo := repository.NewPortRepository()
+	repo := inmemory.NewPortRepository()
 	srv := service.NewPortService(repo)
 
 	// Load ports from the PORTS_JSON_PATH file
@@ -31,11 +32,13 @@ func main() {
 	}
 	defer file.Close()
 
-	err = srv.LoadPorts(file, terminateCh)
+	ctx := context.Background()
+
+	err = srv.LoadPorts(ctx, file, terminateCh)
 	if err != nil {
 		fmt.Printf("Failed to load ports from file: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("Ports imported: %d\n", repo.GetPortsLength())
+	fmt.Printf("Ports imported: %d\n", repo.GetPortsLength(ctx))
 }
