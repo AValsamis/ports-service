@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"bytes"
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,7 +18,7 @@ type mockPortRepository struct {
 	ports map[string]domain.Port
 }
 
-func (m *mockPortRepository) GetPortByUNLOC(unloc string) (*domain.Port, error) {
+func (m *mockPortRepository) GetPortByUNLOC(_ context.Context, unloc string) (*domain.Port, error) {
 	port, exists := m.ports[unloc]
 	if !exists {
 		return nil, nil
@@ -25,12 +26,14 @@ func (m *mockPortRepository) GetPortByUNLOC(unloc string) (*domain.Port, error) 
 	return &port, nil
 }
 
-func (m *mockPortRepository) UpsertPort(port domain.Port) error {
+func (m *mockPortRepository) UpsertPort(_ context.Context, port domain.Port) error {
 	m.ports[port.UNLOC] = port
 	return nil
 }
 
 func TestPortService_LoadPorts_Success(t *testing.T) {
+	ctx := context.Background()
+
 	repo := &mockPortRepository{
 		ports: make(map[string]domain.Port),
 	}
@@ -39,17 +42,17 @@ func TestPortService_LoadPorts_Success(t *testing.T) {
 
 	reader := bytes.NewReader([]byte(samplePorts))
 
-	err := portService.LoadPorts(reader, nil)
+	err := portService.LoadPorts(ctx, reader, nil)
 	assert.NoError(t, err)
 
-	portAEJEA, err := repo.GetPortByUNLOC("AEJEA")
+	portAEJEA, err := repo.GetPortByUNLOC(ctx, "AEJEA")
 	assert.NoError(t, err)
 	assert.NotNil(t, portAEJEA)
 	assert.Equal(t, "Jebel Ali", portAEJEA.Name)
 	assert.Equal(t, "Jebel Ali", portAEJEA.City)
 	assert.Equal(t, "United Arab Emirates", portAEJEA.Country)
 
-	portAEJED, err := repo.GetPortByUNLOC("AEJED")
+	portAEJED, err := repo.GetPortByUNLOC(ctx, "AEJED")
 	assert.NoError(t, err)
 	assert.NotNil(t, portAEJED)
 	assert.Equal(t, "Jebel Dhanna", portAEJED.Name)
@@ -58,6 +61,8 @@ func TestPortService_LoadPorts_Success(t *testing.T) {
 }
 
 func TestPortService_LoadPorts_Error(t *testing.T) {
+	ctx := context.Background()
+
 	repo := &mockPortRepository{
 		ports: make(map[string]domain.Port),
 	}
@@ -71,18 +76,18 @@ func TestPortService_LoadPorts_Error(t *testing.T) {
 	}`
 
 	reader := bytes.NewReader([]byte(inputWithInvalidPort))
-	err := portService.LoadPorts(reader, nil)
+	err := portService.LoadPorts(ctx, reader, nil)
 	assert.NoError(t, err)
 
 	// Verify that the ports without validation errors are still upserted
-	portAEJEA, err := repo.GetPortByUNLOC("AEJEA")
+	portAEJEA, err := repo.GetPortByUNLOC(ctx, "AEJEA")
 	assert.NoError(t, err)
 	assert.NotNil(t, portAEJEA)
 	assert.Equal(t, "Jebel Ali", portAEJEA.Name)
 	assert.Equal(t, "Jebel Ali", portAEJEA.City)
 	assert.Equal(t, "United Arab Emirates", portAEJEA.Country)
 
-	portAEJED, err := repo.GetPortByUNLOC("AEJED")
+	portAEJED, err := repo.GetPortByUNLOC(ctx, "AEJED")
 	assert.NoError(t, err)
 	assert.NotNil(t, portAEJED)
 	assert.Equal(t, "Jebel Dhanna", portAEJED.Name)
@@ -90,12 +95,14 @@ func TestPortService_LoadPorts_Error(t *testing.T) {
 	assert.Equal(t, "United Arab Emirates", portAEJED.Country)
 
 	// Verify that the port with validation errors is not upserted
-	invalidPort, err := repo.GetPortByUNLOC("InvalidPort")
+	invalidPort, err := repo.GetPortByUNLOC(ctx, "InvalidPort")
 	assert.NoError(t, err)
 	assert.Nil(t, invalidPort)
 }
 
 func TestPortService_LoadPorts_Graceful_Termination(t *testing.T) {
+	ctx := context.Background()
+
 	repo := &mockPortRepository{
 		ports: make(map[string]domain.Port),
 	}
@@ -109,15 +116,15 @@ func TestPortService_LoadPorts_Graceful_Termination(t *testing.T) {
 	// Send a termination signal to terminate the method prematurely
 	terminate <- syscall.SIGTERM
 
-	err := portService.LoadPorts(reader, terminate)
+	err := portService.LoadPorts(ctx, reader, terminate)
 	assert.NoError(t, err)
 
 	// Verify that no ports are upserted due to premature termination
-	portAEJEA, err := repo.GetPortByUNLOC("AEJEA")
+	portAEJEA, err := repo.GetPortByUNLOC(ctx, "AEJEA")
 	assert.NoError(t, err)
 	assert.Nil(t, portAEJEA)
 
-	portAEJED, err := repo.GetPortByUNLOC("AEJED")
+	portAEJED, err := repo.GetPortByUNLOC(ctx, "AEJED")
 	assert.NoError(t, err)
 	assert.Nil(t, portAEJED)
 }

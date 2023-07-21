@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,8 +14,8 @@ import (
 
 // PortRepository is an interface for accessing port data.
 type PortRepository interface {
-	GetPortByUNLOC(unloc string) (*domain.Port, error)
-	UpsertPort(port domain.Port) error
+	GetPortByUNLOC(ctx context.Context, unloc string) (*domain.Port, error)
+	UpsertPort(ctx context.Context, port domain.Port) error
 }
 
 // PortService provides methods for managing ports.
@@ -33,7 +34,7 @@ func NewPortService(repo PortRepository) *PortService {
 // It expects the input to be in JSON format.
 // Each JSON object should represent a single port.
 // It decodes the JSON data from the reader and upserts the ports into the repository.
-func (s *PortService) LoadPorts(reader io.Reader, terminate chan os.Signal) error {
+func (s *PortService) LoadPorts(ctx context.Context, reader io.Reader, terminate chan os.Signal) error {
 	dec := json.NewDecoder(reader)
 
 	t, err := dec.Token()
@@ -65,7 +66,7 @@ func (s *PortService) LoadPorts(reader io.Reader, terminate chan os.Signal) erro
 		}
 
 		port.UNLOC = key
-		err = s.upsertPort(port)
+		err = s.upsertPort(ctx, port)
 		if err != nil {
 			log.Warnf("failed to upsert port: %v", err)
 			continue
@@ -77,10 +78,10 @@ func (s *PortService) LoadPorts(reader io.Reader, terminate chan os.Signal) erro
 // upsertPort inserts or updates a port in the repository.
 // It validates the port's data before upserting.
 // If the validation fails, it returns an error.
-func (s *PortService) upsertPort(port domain.Port) error {
+func (s *PortService) upsertPort(ctx context.Context, port domain.Port) error {
 	if err := port.Validate(); err != nil {
 		return err
 	}
 
-	return s.repo.UpsertPort(port)
+	return s.repo.UpsertPort(ctx, port)
 }
